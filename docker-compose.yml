@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  php:
+    build: . # Build with the Dockerfile
+    image: php:8-apache
+    depends_on:
+      - mysql
+    # Change of current directory
+    working_dir: /var/www/html/[ProjectName]
+    volumes:
+      - .:/var/www/html/[ProjectName]
+    # Definition of the port on which to listen, we link it to the local port 8080 "portmachine: portapache"
+    ports:
+      - "8080:80"
+
+  mysql:
+    image: mysql:5.7
+    command:
+      - "--default-authentication-plugin=mysql_native_password"
+      - "--lower_case_table_names=1"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass0
+      # Environment variables to connect to the database
+      - MYSQL_DATABASE=sandboxdb
+      - MYSQL_USER=sandboxuser
+      - MYSQL_PASSWORD=sandboxpassword
+    ports:
+      - "3306:3306"
+
+  mail:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
